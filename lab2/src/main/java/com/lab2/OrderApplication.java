@@ -11,12 +11,15 @@ import quickfix.RejectLogon;
 import quickfix.Session;
 import quickfix.UnsupportedMessageType;
 import quickfix.field.*;
+import java.util.concurrent.BlockingQueue;
 
 public class OrderApplication implements Application {
     private OrderBroadcaster broadcaster;
+    private BlockingQueue<Order> dbQueue;
     
-    public OrderApplication(OrderBroadcaster broadcaster) {
+    public OrderApplication(OrderBroadcaster broadcaster, BlockingQueue<Order> dbQueue) {
         this.broadcaster = broadcaster;
+        this.dbQueue = dbQueue;
     }
     
     @Override
@@ -67,14 +70,20 @@ public class OrderApplication implements Application {
             System.out.printf("ORDER RECEIVED: ID=%s Side=%s Sym=%s Px=%.2f Qty=%.0f%n",
             clOrdId, (side == '1' ? "BUY" : "SELL"), symbol, price, qty);
             
-            // Broadcast order to WebSocket clients
+            // Create Order POJO
             Order order = new Order(clOrdId, symbol, side, price, qty);
+            
+            // Broadcast order to WebSocket clients
             broadcaster.broadcastOrder(order);
+            
             // 3. Validation (Simple Rule: Price and Qty must be positive)
             if (qty <= 0 || price <= 0) {
             sendReject(message, sessionId, "Invalid Price or Qty");
             } else {
+            // Send ACK first (Low Latency)
             acceptOrder(message, sessionId);
+            // Then queue for storage (Async)
+            dbQueue.offer(order);
         }
         } 
         catch (FieldNotFound e) {
