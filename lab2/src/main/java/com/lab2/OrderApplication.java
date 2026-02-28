@@ -13,6 +13,12 @@ import quickfix.UnsupportedMessageType;
 import quickfix.field.*;
 
 public class OrderApplication implements Application {
+    private OrderBroadcaster broadcaster;
+    
+    public OrderApplication(OrderBroadcaster broadcaster) {
+        this.broadcaster = broadcaster;
+    }
+    
     @Override
     public void onCreate(SessionID sessionId) {
     System.out.println("Session Created: " + sessionId);
@@ -60,6 +66,10 @@ public class OrderApplication implements Application {
             double price = message.getDouble(Price.FIELD);
             System.out.printf("ORDER RECEIVED: ID=%s Side=%s Sym=%s Px=%.2f Qty=%.0f%n",
             clOrdId, (side == '1' ? "BUY" : "SELL"), symbol, price, qty);
+            
+            // Broadcast order to WebSocket clients
+            Order order = new Order(clOrdId, symbol, side, price, qty);
+            broadcaster.broadcastOrder(order);
             // 3. Validation (Simple Rule: Price and Qty must be positive)
             if (qty <= 0 || price <= 0) {
             sendReject(message, sessionId, "Invalid Price or Qty");

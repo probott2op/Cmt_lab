@@ -8,8 +8,13 @@ import quickfix.SocketAcceptor;
 public class AppLauncher {
     public static void main(String[] args) {
         try {
+            // Start WebSocket Server
+            OrderBroadcaster server = new OrderBroadcaster(8080);
+            server.start();
+            System.out.println("WebSocket Server started on port 8080");
+            
             SessionSettings settings = new SessionSettings("order-service.cfg");
-            OrderApplication application = new OrderApplication();
+            OrderApplication application = new OrderApplication(server);
             FileStoreFactory storeFactory = new FileStoreFactory(settings);
             ScreenLogFactory logFactory = new ScreenLogFactory(settings);
             DefaultMessageFactory messageFactory = new DefaultMessageFactory();
