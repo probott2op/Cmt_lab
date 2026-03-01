@@ -12,14 +12,33 @@ import quickfix.Session;
 import quickfix.UnsupportedMessageType;
 import quickfix.field.*;
 import java.util.concurrent.BlockingQueue;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OrderApplication implements Application {
     private OrderBroadcaster broadcaster;
     private BlockingQueue<Order> dbQueue;
+    // Load securities into a HashMap on startup for fast lookup
+    private Map<String, Security> validSecurities = new HashMap<>();
     
     public OrderApplication(OrderBroadcaster broadcaster, BlockingQueue<Order> dbQueue) {
         this.broadcaster = broadcaster;
         this.dbQueue = dbQueue;
+        // Load reference data on startup
+        loadReferenceData();
+    }
+    
+    /**
+     * Load reference data (securities, customers) on startup
+     */
+    private void loadReferenceData() {
+        System.out.println("Loading reference data from database...");
+        List<Security> securities = DatabaseManager.loadAllSecurities();
+        for (Security security : securities) {
+            validSecurities.put(security.getSymbol(), security);
+        }
+        System.out.println("Reference data loaded successfully. Valid symbols: " + validSecurities.keySet());
     }
     
     @Override
@@ -69,6 +88,13 @@ public class OrderApplication implements Application {
             double price = message.getDouble(Price.FIELD);
             System.out.printf("ORDER RECEIVED: ID=%s Side=%s Sym=%s Px=%.2f Qty=%.0f%n",
             clOrdId, (side == '1' ? "BUY" : "SELL"), symbol, price, qty);
+            
+            // Validate symbol against security master
+            if (!validSecurities.containsKey(symbol)) {
+                System.out.println("REJECTED: Unknown Security Symbol: " + symbol);
+                sendReject(message, sessionId, "Unknown Security Symbol");
+                return;
+            }
             
             // Create Order POJO
             Order order = new Order(clOrdId, symbol, side, price, qty);
