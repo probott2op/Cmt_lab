@@ -3,7 +3,7 @@ import useWebSocket from '../hooks/useWebSocket';
 import './OrderGrid.css';
 
 const OrderGrid = () => {
-  const { messages: orders, connectionStatus, error } = useWebSocket('ws://localhost:8080');
+  const { messages: orders, trades, connectionStatus, error } = useWebSocket('ws://localhost:8080');
 
   const getStatusColor = () => {
     switch (connectionStatus) {
@@ -61,10 +61,15 @@ const OrderGrid = () => {
             <span className="stat-label">Total Orders</span>
             <span className="stat-value">{orders.length}</span>
           </div>
+          <div className="stat-item">
+            <span className="stat-label">Total Trades</span>
+            <span className="stat-value">{trades.length}</span>
+          </div>
         </div>
       </div>
 
       <div className="table-container">
+        <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>📋 Orders</h2>
         {orders.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📊</div>
@@ -100,6 +105,54 @@ const OrderGrid = () => {
                   </td>
                   <td className="quantity">{formatQuantity(order.quantity)}</td>
                   <td className="price">${formatPrice(order.price)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      <div className="table-container" style={{ marginTop: '2rem' }}>
+        <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>💰 Trade Executions</h2>
+        {trades.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">📈</div>
+            <h3>No Trades Yet</h3>
+            <p>Waiting for matching orders to execute...</p>
+          </div>
+        ) : (
+          <table className="order-table">
+            <thead>
+              <tr>
+                <th>Exec ID</th>
+                <th>Order ID</th>
+                <th>Symbol</th>
+                <th>Side</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trades.map((trade, index) => (
+                <tr key={`${trade.execId}-${index}`} className="order-row">
+                  <td className="order-id">{trade.execId?.substring(0, 8)}...</td>
+                  <td className="order-id">{trade.orderId?.substring(0, 8)}...</td>
+                  <td className="symbol">{trade.symbol}</td>
+                  <td className="side">
+                    <span 
+                      className="side-badge"
+                      style={{ 
+                        backgroundColor: getSideColor(trade.side) + '20',
+                        color: getSideColor(trade.side)
+                      }}
+                    >
+                      {formatSide(trade.side)}
+                    </span>
+                  </td>
+                  <td className="quantity">{trade.execQty}</td>
+                  <td className="price">${formatPrice(trade.execPrice)}</td>
+                  <td className="order-id">{new Date(trade.matchTime).toLocaleTimeString()}</td>
                 </tr>
               ))}
             </tbody>

@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from 'react';
  */
 const useWebSocket = (url) => {
   const [messages, setMessages] = useState([]);
+  const [trades, setTrades] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('connecting');
   const [error, setError] = useState(null);
   const socketRef = useRef(null);
@@ -25,10 +26,16 @@ const useWebSocket = (url) => {
     socket.onmessage = (event) => {
       try {
         console.log('📨 Raw data received:', event.data);
-        const newOrder = JSON.parse(event.data);
+        const message = JSON.parse(event.data);
         
-        // Add new order at the beginning of the array
-        setMessages((prevMessages) => [newOrder, ...prevMessages]);
+        if (message.type === 'ORDER') {
+          // Add new order at the beginning of the array
+          setMessages((prevMessages) => [message.data, ...prevMessages]);
+        } else if (message.type === 'TRADE') {
+          // Add new trade at the beginning of the array
+          setTrades((prevTrades) => [message.data, ...prevTrades]);
+          console.log('💰 Trade executed:', message.data);
+        }
       } catch (err) {
         console.error('Failed to parse message:', err);
         setError('Failed to parse incoming data');
@@ -58,7 +65,7 @@ const useWebSocket = (url) => {
     };
   }, [url]);
 
-  return { messages, connectionStatus, error };
+  return { messages, trades, connectionStatus, error };
 };
 
 export default useWebSocket;

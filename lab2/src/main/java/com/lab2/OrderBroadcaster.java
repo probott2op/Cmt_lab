@@ -20,10 +20,18 @@ public class OrderBroadcaster extends WebSocketServer {
     }
     
     public void broadcastOrder(Order order) {
-    // Convert Order object to JSON string
-    String json = new com.google.gson.Gson().toJson(order);
-    // Send to all connected UIs
-    broadcast(json);
+        // Convert Order object to JSON string
+        String json = "{\"type\":\"ORDER\",\"data\":" + new com.google.gson.Gson().toJson(order) + "}";
+        // Send to all connected UIs
+        broadcast(json);
+    }
+    
+    public void sendTradeUpdate(Execution execution) {
+        // Convert Execution object to JSON string with type
+        String json = "{\"type\":\"TRADE\",\"data\":" + new com.google.gson.Gson().toJson(execution) + "}";
+        // Send to all connected UIs
+        broadcast(json);
+        System.out.println("Broadcasted trade: " + execution.getExecId());
     }
 
     @Override

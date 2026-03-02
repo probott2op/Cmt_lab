@@ -16,8 +16,8 @@ public class AppLauncher {
             server.start();
             System.out.println("WebSocket Server started on port 8080");
             
-            // 1. Create the shared queue
-            BlockingQueue<Order> dbQueue = new LinkedBlockingQueue<>();
+            // 1. Create the shared queue for both Orders and Executions
+            BlockingQueue<Object> dbQueue = new LinkedBlockingQueue<>();
             
             // 2. Start the Consumer (Worker)
             OrderPersister persister = new OrderPersister(dbQueue);

@@ -1,18 +1,28 @@
 package com.lab2;
 
 public class Order {
+    private String orderId;
     private String clOrdID;
     private String symbol;
     private char side;
     private double price;
     private double quantity;
 
-    public Order(String clOrdID, String symbol, char side, double price, double quantity) {
+    public Order(String orderId, String clOrdID, String symbol, char side, double price, double quantity) {
+        this.orderId = orderId;
         this.clOrdID = clOrdID;
         this.symbol = symbol;
         this.side = side;
         this.price = price;
         this.quantity = quantity;
+    }
+    
+    public String getOrderId() {
+        return orderId;
+    }
+    
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
     public String getClOrdID() {
         return clOrdID;
@@ -44,5 +54,9 @@ public class Order {
     }
     public void setQuantity(double quantity) {
         this.quantity = quantity;
+    }
+    
+    public void reduceQty(double qty) {
+        this.quantity -= qty;
     }
 }

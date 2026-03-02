@@ -18,11 +18,15 @@ import java.util.Map;
 
 public class OrderApplication implements Application {
     private OrderBroadcaster broadcaster;
-    private BlockingQueue<Order> dbQueue;
+    private BlockingQueue<Object> dbQueue;
     // Load securities into a HashMap on startup for fast lookup
     private Map<String, Security> validSecurities = new HashMap<>();
+    // Order Books: One per symbol for isolated concurrency
+    private Map<String, OrderBook> orderBooks = new HashMap<>();
+    // Track current session for sending executions
+    private SessionID currentSessionID;
     
-    public OrderApplication(OrderBroadcaster broadcaster, BlockingQueue<Order> dbQueue) {
+    public OrderApplication(OrderBroadcaster broadcaster, BlockingQueue<Object> dbQueue) {
         this.broadcaster = broadcaster;
         this.dbQueue = dbQueue;
         // Load reference data on startup
@@ -47,7 +51,8 @@ public class OrderApplication implements Application {
     }
     @Override
     public void onLogon(SessionID sessionId) {
-    System.out.println("LOGON Success: " + sessionId);
+        System.out.println("LOGON Success: " + sessionId);
+        this.currentSessionID = sessionId;
     }
     @Override
     public void onLogout(SessionID sessionId) {
@@ -97,24 +102,54 @@ public class OrderApplication implements Application {
             }
             
             // Create Order POJO
-            Order order = new Order(clOrdId, symbol, side, price, qty);
+            String orderId = java.util.UUID.randomUUID().toString();
+            Order order = new Order(orderId, clOrdId, symbol, side, price, qty);
             
             // Broadcast order to WebSocket clients
             broadcaster.broadcastOrder(order);
             
             // 3. Validation (Simple Rule: Price and Qty must be positive)
             if (qty <= 0 || price <= 0) {
-            sendReject(message, sessionId, "Invalid Price or Qty");
+                sendReject(message, sessionId, "Invalid Price or Qty");
             } else {
-            // Send ACK first (Low Latency)
-            acceptOrder(message, sessionId);
-            // Then queue for storage (Async)
-            dbQueue.offer(order);
-        }
+                // Send ACK first (Low Latency)
+                acceptOrder(message, sessionId);
+                // Then queue for storage (Async)
+                dbQueue.offer(order);
+                
+                // 4. Match the order using the Order Book for this symbol
+                OrderBook book = getOrCreateOrderBook(symbol);
+                List<Execution> trades = book.match(order);
+                
+                // 5. Process executions (if any trades happened)
+                if (!trades.isEmpty()) {
+                    System.out.println("Matched " + trades.size() + " execution(s) for order " + clOrdId);
+                    for (Execution trade : trades) {
+                        System.out.println("  -> " + trade);
+                        // 1. Persist to DB (Async)
+                        dbQueue.offer(trade);
+                        // 2. Notify User Interface
+                        broadcaster.sendTradeUpdate(trade);
+                        // 3. Send FIX Message to Client
+                        sendFillReport(trade, sessionId);
+                    }
+                }
+            }
         } 
         catch (FieldNotFound e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Get or create an OrderBook for a specific symbol
+     * Synchronized to ensure thread-safe creation
+     */
+    private synchronized OrderBook getOrCreateOrderBook(String symbol) {
+        return orderBooks.computeIfAbsent(symbol, k -> {
+            System.out.println("Creating new OrderBook for symbol: " + symbol);
+            return new OrderBook();
+        });
     }
 
     private void acceptOrder(Message request, SessionID sessionId) {
@@ -142,6 +177,31 @@ public class OrderApplication implements Application {
     }
 }
 
+    private void sendFillReport(Execution trade, SessionID sessionId) {
+        try {
+            quickfix.fix44.ExecutionReport fixTrade = new quickfix.fix44.ExecutionReport();
+            // Critical Fields for a Fill
+            fixTrade.set(new OrderID(trade.getOrderId()));
+            fixTrade.set(new ExecID(trade.getExecId()));
+            fixTrade.set(new ExecType(ExecType.TRADE)); // 'F'
+            fixTrade.set(new OrdStatus(OrdStatus.FILLED)); // '2'
+            fixTrade.set(new Symbol(trade.getSymbol()));
+            fixTrade.set(new Side(trade.getSide()));
+            fixTrade.set(new ClOrdID("TRADE_" + trade.getExecId())); // Client order ID
+            // Trade Details
+            fixTrade.set(new LastPx(trade.getExecPrice()));
+            fixTrade.set(new LastQty(trade.getExecQty()));
+            fixTrade.set(new CumQty(trade.getExecQty()));
+            fixTrade.set(new LeavesQty(0)); // Assuming full fill for simplicity
+            fixTrade.set(new AvgPx(trade.getExecPrice()));
+            Session.sendToTarget(fixTrade, sessionId);
+            System.out.println("Sent FIX fill report for execution: " + trade.getExecId());
+        } catch (Exception e) {
+            System.err.println("Error sending fill report: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
     private void sendReject(Message request, SessionID sessionId, String reason) {
     try {
         // Create an ExecutionReport (MsgType = 8) for rejection
