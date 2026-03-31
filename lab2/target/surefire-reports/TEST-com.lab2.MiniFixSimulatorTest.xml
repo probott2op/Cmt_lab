@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.lab2.MiniFixSimulatorTest" time="3.324" tests="5" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="25"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="/Users/Jaiwant/repos/Cmt_lab/lab2/target/test-classes:/Users/Jaiwant/repos/Cmt_lab/lab2/target/classes:/Users/Jaiwant/.m2/repository/org/quickfixj/quickfixj-core/2.3.1/quickfixj-core-2.3.1.jar:/Users/Jaiwant/.m2/repository/org/apache/mina/mina-core/2.1.4/mina-core-2.1.4.jar:/Users/Jaiwant/.m2/repository/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/Users/Jaiwant/.m2/repository/org/quickfixj/quickfixj-messages-all/2.3.1/quickfixj-messages-all-2.3.1.jar:/Users/Jaiwant/.m2/repository/org/java-websocket/Java-WebSocket/1.5.3/Java-WebSocket-1.5.3.jar:/Users/Jaiwant/.m2/repository/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar:/Users/Jaiwant/.m2/repository/mysql/mysql-connector-java/8.0.28/mysql-connector-java-8.0.28.jar:/Users/Jaiwant/.m2/repository/com/google/protobuf/protobuf-java/3.11.4/protobuf-java-3.11.4.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.0/junit-jupiter-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.0/junit-jupiter-api-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/Jaiwant/.m2/repository/org/junit/platform/junit-platform-commons/1.10.0/junit-platform-commons-1.10.0.jar:/Users/Jaiwant/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.0/junit-jupiter-params-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.0/junit-jupiter-engine-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/platform/junit-platform-engine/1.10.0/junit-platform-engine-1.10.0.jar:/Users/Jaiwant/.m2/repository/org/mockito/mockito-core/5.5.0/mockito-core-5.5.0.jar:/Users/Jaiwant/.m2/repository/net/bytebuddy/byte-buddy/1.14.6/byte-buddy-1.14.6.jar:/Users/Jaiwant/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.6/byte-buddy-agent-1.14.6.jar:/Users/Jaiwant/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/Jaiwant/.m2/repository/org/mockito/mockito-inline/5.2.0/mockito-inline-5.2.0.jar:/Users/Jaiwant/.m2/repository/org/awaitility/awaitility/4.2.0/awaitility-4.2.0.jar:/Users/Jaiwant/.m2/repository/org/hamcrest/hamcrest/2.1/hamcrest-2.1.jar:/Users/Jaiwant/.m2/repository/org/slf4j/slf4j-simple/1.7.36/slf4j-simple-1.7.36.jar:"/>
+    <property name="java.vm.vendor" value="Homebrew"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.vendor.url" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="user.timezone" value="Asia/Kolkata"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="java.vm.specification.version" value="25"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="IN"/>
+    <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home/lib"/>
+    <property name="sun.java.command" value="/Users/Jaiwant/repos/Cmt_lab/lab2/target/surefire/surefirebooter-20260328145723943_3.jar /Users/Jaiwant/repos/Cmt_lab/lab2/target/surefire 2026-03-28T14-57-23_892-jvmRun1 surefire-20260328145723943_1tmp surefire_0-20260328145723943_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="MiniFixSimulatorTest"/>
+    <property name="surefire.test.class.path" value="/Users/Jaiwant/repos/Cmt_lab/lab2/target/test-classes:/Users/Jaiwant/repos/Cmt_lab/lab2/target/classes:/Users/Jaiwant/.m2/repository/org/quickfixj/quickfixj-core/2.3.1/quickfixj-core-2.3.1.jar:/Users/Jaiwant/.m2/repository/org/apache/mina/mina-core/2.1.4/mina-core-2.1.4.jar:/Users/Jaiwant/.m2/repository/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar:/Users/Jaiwant/.m2/repository/org/quickfixj/quickfixj-messages-all/2.3.1/quickfixj-messages-all-2.3.1.jar:/Users/Jaiwant/.m2/repository/org/java-websocket/Java-WebSocket/1.5.3/Java-WebSocket-1.5.3.jar:/Users/Jaiwant/.m2/repository/com/google/code/gson/gson/2.8.9/gson-2.8.9.jar:/Users/Jaiwant/.m2/repository/mysql/mysql-connector-java/8.0.28/mysql-connector-java-8.0.28.jar:/Users/Jaiwant/.m2/repository/com/google/protobuf/protobuf-java/3.11.4/protobuf-java-3.11.4.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.0/junit-jupiter-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.0/junit-jupiter-api-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/Jaiwant/.m2/repository/org/junit/platform/junit-platform-commons/1.10.0/junit-platform-commons-1.10.0.jar:/Users/Jaiwant/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.0/junit-jupiter-params-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.0/junit-jupiter-engine-5.10.0.jar:/Users/Jaiwant/.m2/repository/org/junit/platform/junit-platform-engine/1.10.0/junit-platform-engine-1.10.0.jar:/Users/Jaiwant/.m2/repository/org/mockito/mockito-core/5.5.0/mockito-core-5.5.0.jar:/Users/Jaiwant/.m2/repository/net/bytebuddy/byte-buddy/1.14.6/byte-buddy-1.14.6.jar:/Users/Jaiwant/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.6/byte-buddy-agent-1.14.6.jar:/Users/Jaiwant/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/Jaiwant/.m2/repository/org/mockito/mockito-inline/5.2.0/mockito-inline-5.2.0.jar:/Users/Jaiwant/.m2/repository/org/awaitility/awaitility/4.2.0/awaitility-4.2.0.jar:/Users/Jaiwant/.m2/repository/org/hamcrest/hamcrest/2.1/hamcrest-2.1.jar:/Users/Jaiwant/.m2/repository/org/slf4j/slf4j-simple/1.7.36/slf4j-simple-1.7.36.jar:"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="/Users/Jaiwant"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="/opt/homebrew/Cellar/openjdk/25.0.1/libexec/openjdk.jdk/Contents/Home"/>
+    <property name="file.separator" value="/"/>
+    <property name="basedir" value="/Users/Jaiwant/repos/Cmt_lab/lab2"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="apple.awt.application.name" value="ForkedBooter"/>
+    <property name="surefire.real.class.path" value="/Users/Jaiwant/repos/Cmt_lab/lab2/target/surefire/surefirebooter-20260328145723943_3.jar"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.runtime.version" value="25.0.1"/>
+    <property name="user.name" value="Jaiwant"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=":"/>
+    <property name="os.version" value="15.6.1"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="java.vendor.version" value="Homebrew"/>
+    <property name="localRepository" value="/Users/Jaiwant/.m2/repository"/>
+    <property name="java.vendor.url.bug" value="https://github.com/Homebrew/homebrew-core/issues"/>
+    <property name="java.io.tmpdir" value="/var/folders/nx/jm330ljd6q310c1rdb4__v4w0000gn/T/"/>
+    <property name="java.version" value="25.0.1"/>
+    <property name="user.dir" value="/Users/Jaiwant/repos/Cmt_lab/lab2"/>
+    <property name="os.arch" value="aarch64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/Users/Jaiwant/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Homebrew"/>
+    <property name="java.vm.version" value="25.0.1"/>
+    <property name="stdin.encoding" value="UTF-8"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="java.class.version" value="69.0"/>
+  </properties>
+  <testcase name="test1_1_LogonHandshake" classname="com.lab2.MiniFixSimulatorTest" time="0.011">
+    <system-out><![CDATA[Starting MiniFix Integration Environment...
+Loading reference data from database...
+Reference data loaded successfully. Valid symbols: [MSFT, GOOG, IBM]
+<20260328-09:27:25, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Session FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT schedule is daily, 00:00:00-UTC - 00:00:00-UTC)
+<20260328-09:27:25, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Created session: FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT)
+Session Created: FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT
+<20260328-09:27:25, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Session FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER schedule is daily, 00:00:00-UTC - 00:00:00-UTC)
+<20260328-09:27:25, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Created session: FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER)
+<20260328-09:27:25, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Configured socket addresses for session: [localhost/127.0.0.1:9876])
+<20260328-09:27:25, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (MINA session created: local=/127.0.0.1:63646, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=localhost/127.0.0.1:9876)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=86&amp#1;35=A&amp#1;34=1&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.541&amp#1;56=EXEC_SERVER&amp#1;98=0&amp#1;108=30&amp#1;141=Y&amp#1;10=201&amp#1;)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Initiated logon request)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=86&amp#1;35=A&amp#1;34=1&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.541&amp#1;56=EXEC_SERVER&amp#1;98=0&amp#1;108=30&amp#1;141=Y&amp#1;10=201&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Accepting session FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT from /127.0.0.1:63646)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Acceptor heartbeat set to 30 seconds)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Received logon)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, event> (Responding to Logon request)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=86&amp#1;35=A&amp#1;34=1&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.582&amp#1;56=MINIFIX_CLIENT&amp#1;98=0&amp#1;108=30&amp#1;141=Y&amp#1;10=206&amp#1;)
+LOGON Success: FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=86&amp#1;35=A&amp#1;34=1&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.582&amp#1;56=MINIFIX_CLIENT&amp#1;98=0&amp#1;108=30&amp#1;141=Y&amp#1;10=206&amp#1;)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Logon contains ResetSeqNumFlag=Y, resetting sequence numbers to 1)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, event> (Received logon)
+MiniFix Logged On
+]]></system-out>
+    <system-err><![CDATA[WARNING: A Java agent has been loaded dynamically (/Users/Jaiwant/.m2/repository/net/bytebuddy/byte-buddy-agent/1.14.6/byte-buddy-agent-1.14.6.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[main] INFO quickfix.DefaultSessionSchedule - [FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT] daily, 00:00:00-UTC - 00:00:00-UTC
+[main] INFO quickfix.SocketAcceptor - SessionTimer started
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketTcpNoDelay=true
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketSynchronousWrites=false
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketSynchronousWriteTimeout=30000
+[main] INFO quickfix.SocketAcceptor - Listening for connections at 0.0.0.0/0.0.0.0:9876 for session(s) [FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT]
+[QFJ Message Processor] INFO quickfix.SocketAcceptor - Started QFJ Message Processor
+[main] INFO quickfix.DefaultSessionSchedule - [FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER] daily, 00:00:00-UTC - 00:00:00-UTC
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketTcpNoDelay=true
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketSynchronousWrites=false
+[main] INFO quickfix.mina.NetworkingOptions - Socket option: SocketSynchronousWriteTimeout=30000
+[main] INFO quickfix.SocketInitiator - SessionTimer started
+[QFJ Message Processor] INFO quickfix.SocketInitiator - Started QFJ Message Processor
+[NioProcessor-2] INFO quickfix.mina.acceptor.AcceptorIoHandler - MINA session created: local=/127.0.0.1:9876, class org.apache.mina.transport.socket.nio.NioSocketSession, remote=/127.0.0.1:63646
+]]></system-err>
+  </testcase>
+  <testcase name="test2_1_ValidOrderAcceptance" classname="com.lab2.MiniFixSimulatorTest" time="0.022">
+    <system-out><![CDATA[MiniFix Sending: 8=FIX.4.4&amp#1;9=138&amp#1;35=D&amp#1;34=2&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.710&amp#1;56=EXEC_SERVER&amp#1;11=ORD_001&amp#1;38=100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.709&amp#1;10=101&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=138&amp#1;35=D&amp#1;34=2&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.710&amp#1;56=EXEC_SERVER&amp#1;11=ORD_001&amp#1;38=100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.709&amp#1;10=101&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=138&amp#1;35=D&amp#1;34=2&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.710&amp#1;56=EXEC_SERVER&amp#1;11=ORD_001&amp#1;38=100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.709&amp#1;10=101&amp#1;)
+ORDER RECEIVED: ID=ORD_001 Side=BUY Sym=GOOG Px=150.50 Qty=100
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=163&amp#1;35=8&amp#1;34=2&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.718&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=ORD_001&amp#1;14=0&amp#1;17=EXEC_1774690046717&amp#1;37=GEN_1774690046717&amp#1;39=0&amp#1;54=1&amp#1;55=GOOG&amp#1;150=0&amp#1;151=100&amp#1;10=234&amp#1;)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=163&amp#1;35=8&amp#1;34=2&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.718&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=ORD_001&amp#1;14=0&amp#1;17=EXEC_1774690046717&amp#1;37=GEN_1774690046717&amp#1;39=0&amp#1;54=1&amp#1;55=GOOG&amp#1;150=0&amp#1;151=100&amp#1;10=234&amp#1;)
+Creating new OrderBook for symbol: GOOG
+]]></system-out>
+  </testcase>
+  <testcase name="test2_2_NegativeQuantityRejection" classname="com.lab2.MiniFixSimulatorTest" time="0.002">
+    <system-out><![CDATA[MiniFix Sending: 8=FIX.4.4&amp#1;9=139&amp#1;35=D&amp#1;34=3&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.720&amp#1;56=EXEC_SERVER&amp#1;11=ORD_002&amp#1;38=-100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.720&amp#1;10=143&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=139&amp#1;35=D&amp#1;34=3&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.720&amp#1;56=EXEC_SERVER&amp#1;11=ORD_002&amp#1;38=-100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.720&amp#1;10=143&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=139&amp#1;35=D&amp#1;34=3&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.720&amp#1;56=EXEC_SERVER&amp#1;11=ORD_002&amp#1;38=-100&amp#1;40=2&amp#1;44=150.5&amp#1;54=1&amp#1;55=GOOG&amp#1;60=20260328-09:27:26.720&amp#1;10=143&amp#1;)
+ORDER RECEIVED: ID=ORD_002 Side=BUY Sym=GOOG Px=150.50 Qty=-100
+ORDER REJECTED: Invalid Price or Qty
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=185&amp#1;35=8&amp#1;34=3&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.721&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=ORD_002&amp#1;14=0&amp#1;17=EXEC_1774690046721&amp#1;37=REJ_1774690046721&amp#1;39=8&amp#1;54=1&amp#1;55=GOOG&amp#1;58=Invalid Price or Qty&amp#1;150=8&amp#1;151=0&amp#1;10=122&amp#1;)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=185&amp#1;35=8&amp#1;34=3&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.721&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=ORD_002&amp#1;14=0&amp#1;17=EXEC_1774690046721&amp#1;37=REJ_1774690046721&amp#1;39=8&amp#1;54=1&amp#1;55=GOOG&amp#1;58=Invalid Price or Qty&amp#1;150=8&amp#1;151=0&amp#1;10=122&amp#1;)
+]]></system-out>
+  </testcase>
+  <testcase name="test3_2_AggressiveMatchPriceImprovement" classname="com.lab2.MiniFixSimulatorTest" time="0.007">
+    <system-out><![CDATA[MiniFix Sending: 8=FIX.4.4&amp#1;9=137&amp#1;35=D&amp#1;34=4&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=SELL_100&amp#1;38=100&amp#1;40=2&amp#1;44=100&amp#1;54=2&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=088&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=137&amp#1;35=D&amp#1;34=4&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=SELL_100&amp#1;38=100&amp#1;40=2&amp#1;44=100&amp#1;54=2&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=088&amp#1;)
+MiniFix Sending: 8=FIX.4.4&amp#1;9=136&amp#1;35=D&amp#1;34=5&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=BUY_101&amp#1;38=100&amp#1;40=2&amp#1;44=101&amp#1;54=1&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=025&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=136&amp#1;35=D&amp#1;34=5&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=BUY_101&amp#1;38=100&amp#1;40=2&amp#1;44=101&amp#1;54=1&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=025&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=137&amp#1;35=D&amp#1;34=4&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=SELL_100&amp#1;38=100&amp#1;40=2&amp#1;44=100&amp#1;54=2&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=088&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=136&amp#1;35=D&amp#1;34=5&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.723&amp#1;56=EXEC_SERVER&amp#1;11=BUY_101&amp#1;38=100&amp#1;40=2&amp#1;44=101&amp#1;54=1&amp#1;55=MSFT&amp#1;60=20260328-09:27:26.723&amp#1;10=025&amp#1;)
+ORDER RECEIVED: ID=SELL_100 Side=SELL Sym=MSFT Px=100.00 Qty=100
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=164&amp#1;35=8&amp#1;34=4&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.724&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=SELL_100&amp#1;14=0&amp#1;17=EXEC_1774690046724&amp#1;37=GEN_1774690046724&amp#1;39=0&amp#1;54=2&amp#1;55=MSFT&amp#1;150=0&amp#1;151=100&amp#1;10=064&amp#1;)
+Creating new OrderBook for symbol: MSFT
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=164&amp#1;35=8&amp#1;34=4&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.724&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=SELL_100&amp#1;14=0&amp#1;17=EXEC_1774690046724&amp#1;37=GEN_1774690046724&amp#1;39=0&amp#1;54=2&amp#1;55=MSFT&amp#1;150=0&amp#1;151=100&amp#1;10=064&amp#1;)
+ORDER RECEIVED: ID=BUY_101 Side=BUY Sym=MSFT Px=101.00 Qty=100
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=163&amp#1;35=8&amp#1;34=5&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.725&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=BUY_101&amp#1;14=0&amp#1;17=EXEC_1774690046725&amp#1;37=GEN_1774690046725&amp#1;39=0&amp#1;54=1&amp#1;55=MSFT&amp#1;150=0&amp#1;151=100&amp#1;10=003&amp#1;)
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=163&amp#1;35=8&amp#1;34=5&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.725&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=BUY_101&amp#1;14=0&amp#1;17=EXEC_1774690046725&amp#1;37=GEN_1774690046725&amp#1;39=0&amp#1;54=1&amp#1;55=MSFT&amp#1;150=0&amp#1;151=100&amp#1;10=003&amp#1;)
+Matched 1 execution(s) for order BUY_101
+  -> Execution[execId=17d66929-00d1-41e8-966a-abb0f840a97b, orderId=bcacc1e1-2033-4eb6-8ff4-dff30c3dac9b, symbol=MSFT, side=1, execQty=100, execPrice=100.00, matchTime=2026-03-28 14:57:26.725]
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=251&amp#1;35=8&amp#1;34=6&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.728&amp#1;56=MINIFIX_CLIENT&amp#1;6=100&amp#1;11=TRADE_17d66929-00d1-41e8-966a-abb0f840a97b&amp#1;14=100&amp#1;17=17d66929-00d1-41e8-966a-abb0f840a97b&amp#1;31=100&amp#1;32=100&amp#1;37=bcacc1e1-2033-4eb6-8ff4-dff30c3dac9b&amp#1;39=2&amp#1;54=1&amp#1;55=MSFT&amp#1;150=F&amp#1;151=0&amp#1;10=116&amp#1;)
+Sent FIX fill report for execution: 17d66929-00d1-41e8-966a-abb0f840a97b
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=251&amp#1;35=8&amp#1;34=6&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.728&amp#1;56=MINIFIX_CLIENT&amp#1;6=100&amp#1;11=TRADE_17d66929-00d1-41e8-966a-abb0f840a97b&amp#1;14=100&amp#1;17=17d66929-00d1-41e8-966a-abb0f840a97b&amp#1;31=100&amp#1;32=100&amp#1;37=bcacc1e1-2033-4eb6-8ff4-dff30c3dac9b&amp#1;39=2&amp#1;54=1&amp#1;55=MSFT&amp#1;150=F&amp#1;151=0&amp#1;10=116&amp#1;)
+]]></system-out>
+  </testcase>
+  <testcase name="test3_3_PartialFill" classname="com.lab2.MiniFixSimulatorTest" time="0.004">
+    <system-out><![CDATA[MiniFix Sending: 8=FIX.4.4&amp#1;9=134&amp#1;35=D&amp#1;34=6&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=SELL_50&amp#1;38=50&amp#1;40=2&amp#1;44=102&amp#1;54=2&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=155&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=134&amp#1;35=D&amp#1;34=6&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=SELL_50&amp#1;38=50&amp#1;40=2&amp#1;44=102&amp#1;54=2&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=155&amp#1;)
+MiniFix Sending: 8=FIX.4.4&amp#1;9=135&amp#1;35=D&amp#1;34=7&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=BUY_150&amp#1;38=150&amp#1;40=2&amp#1;44=102&amp#1;54=1&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=190&amp#1;
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, outgoing> (8=FIX.4.4&amp#1;9=135&amp#1;35=D&amp#1;34=7&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=BUY_150&amp#1;38=150&amp#1;40=2&amp#1;44=102&amp#1;54=1&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=190&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=134&amp#1;35=D&amp#1;34=6&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=SELL_50&amp#1;38=50&amp#1;40=2&amp#1;44=102&amp#1;54=2&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=155&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, incoming> (8=FIX.4.4&amp#1;9=135&amp#1;35=D&amp#1;34=7&amp#1;49=MINIFIX_CLIENT&amp#1;52=20260328-09:27:26.730&amp#1;56=EXEC_SERVER&amp#1;11=BUY_150&amp#1;38=150&amp#1;40=2&amp#1;44=102&amp#1;54=1&amp#1;55=IBM&amp#1;60=20260328-09:27:26.730&amp#1;10=190&amp#1;)
+ORDER RECEIVED: ID=SELL_50 Side=SELL Sym=IBM Px=102.00 Qty=50
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=161&amp#1;35=8&amp#1;34=7&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.731&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=SELL_50&amp#1;14=0&amp#1;17=EXEC_1774690046731&amp#1;37=GEN_1774690046731&amp#1;39=0&amp#1;54=2&amp#1;55=IBM&amp#1;150=0&amp#1;151=50&amp#1;10=128&amp#1;)
+Creating new OrderBook for symbol: IBM
+ORDER RECEIVED: ID=BUY_150 Side=BUY Sym=IBM Px=102.00 Qty=150
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=161&amp#1;35=8&amp#1;34=7&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.731&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=SELL_50&amp#1;14=0&amp#1;17=EXEC_1774690046731&amp#1;37=GEN_1774690046731&amp#1;39=0&amp#1;54=2&amp#1;55=IBM&amp#1;150=0&amp#1;151=50&amp#1;10=128&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=162&amp#1;35=8&amp#1;34=8&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.732&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=BUY_150&amp#1;14=0&amp#1;17=EXEC_1774690046732&amp#1;37=GEN_1774690046732&amp#1;39=0&amp#1;54=1&amp#1;55=IBM&amp#1;150=0&amp#1;151=150&amp#1;10=166&amp#1;)
+Matched 1 execution(s) for order BUY_150
+  -> Execution[execId=cea652aa-5b25-4860-a328-c5328ab40ccb, orderId=f3c6b3a5-be0a-43e2-83cc-3be911b7029b, symbol=IBM, side=1, execQty=50, execPrice=102.00, matchTime=2026-03-28 14:57:26.732]
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=162&amp#1;35=8&amp#1;34=8&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.732&amp#1;56=MINIFIX_CLIENT&amp#1;6=0&amp#1;11=BUY_150&amp#1;14=0&amp#1;17=EXEC_1774690046732&amp#1;37=GEN_1774690046732&amp#1;39=0&amp#1;54=1&amp#1;55=IBM&amp#1;150=0&amp#1;151=150&amp#1;10=166&amp#1;)
+<20260328-09:27:26, FIX.4.4:EXEC_SERVER->MINIFIX_CLIENT, outgoing> (8=FIX.4.4&amp#1;9=248&amp#1;35=8&amp#1;34=9&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.732&amp#1;56=MINIFIX_CLIENT&amp#1;6=102&amp#1;11=TRADE_cea652aa-5b25-4860-a328-c5328ab40ccb&amp#1;14=50&amp#1;17=cea652aa-5b25-4860-a328-c5328ab40ccb&amp#1;31=102&amp#1;32=50&amp#1;37=f3c6b3a5-be0a-43e2-83cc-3be911b7029b&amp#1;39=2&amp#1;54=1&amp#1;55=IBM&amp#1;150=F&amp#1;151=0&amp#1;10=239&amp#1;)
+Sent FIX fill report for execution: cea652aa-5b25-4860-a328-c5328ab40ccb
+<20260328-09:27:26, FIX.4.4:MINIFIX_CLIENT->EXEC_SERVER, incoming> (8=FIX.4.4&amp#1;9=248&amp#1;35=8&amp#1;34=9&amp#1;49=EXEC_SERVER&amp#1;52=20260328-09:27:26.732&amp#1;56=MINIFIX_CLIENT&amp#1;6=102&amp#1;11=TRADE_cea652aa-5b25-4860-a328-c5328ab40ccb&amp#1;14=50&amp#1;17=cea652aa-5b25-4860-a328-c5328ab40ccb&amp#1;31=102&amp#1;32=50&amp#1;37=f3c6b3a5-be0a-43e2-83cc-3be911b7029b&amp#1;39=2&amp#1;54=1&amp#1;55=IBM&amp#1;150=F&amp#1;151=0&amp#1;10=239&amp#1;)
+]]></system-out>
+  </testcase>
+</testsuite>
