@@ -1,0 +1,41 @@
+
+1000 order/sec
+Processed 1000 orders. Avg Latency: 355.11 us
+Processed 2000 orders. Avg Latency: 269.17 us
+Processed 3000 orders. Avg Latency: 243.32 us
+Processed 4000 orders. Avg Latency: 213.56 us
+Processed 5000 orders. Avg Latency: 196.21 us
+Processed 6000 orders. Avg Latency: 181.18 us
+Processed 7000 orders. Avg Latency: 169.61 us
+Processed 8000 orders. Avg Latency: 159.79 us
+Processed 9000 orders. Avg Latency: 150.80 us
+Processed 10000 orders. Avg Latency: 142.56 us
+Processed 11000 orders. Avg Latency: 135.88 us
+Processed 12000 orders. Avg Latency: 129.81 us
+Processed 13000 orders. Avg Latency: 126.09 us
+
+500orders/sec
+Processed 1000 orders. Avg Latency: 288.53 us
+Processed 2000 orders. Avg Latency: 229.87 us
+Processed 3000 orders. Avg Latency: 195.08 us
+Processed 4000 orders. Avg Latency: 176.29 us
+Processed 5000 orders. Avg Latency: 161.97 us
+Processed 6000 orders. Avg Latency: 151.32 us
+Processed 7000 orders. Avg Latency: 143.81 us
+Processed 8000 orders. Avg Latency: 137.45 us
+Processed 9000 orders. Avg Latency: 131.59 us
+Processed 10000 orders. Avg Latency: 125.57 us
+Processed 11000 orders. Avg Latency: 121.23 us
+Processed 12000 orders. Avg Latency: 117.75 us
+Processed 13000 orders. Avg Latency: 114.52 us
+
+100 orders/sec
+Processed 1000 orders. Avg Latency: 354.23 us
+Processed 2000 orders. Avg Latency: 286.02 us
+Processed 3000 orders. Avg Latency: 275.15 us
+Processed 4000 orders. Avg Latency: 272.35 us
+Processed 5000 orders. Avg Latency: 269.16 us
+Processed 6000 orders. Avg Latency: 266.90 us
+Processed 7000 orders. Avg Latency: 261.52 us
+Processed 8000 orders. Avg Latency: 253.98 us
+Processed 9000 orders. Avg Latency: 247.89 us

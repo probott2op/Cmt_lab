@@ -1,10 +1,10 @@
 import './App.css'
-import OrderGrid from './components/OrderGrid'
+import Dashboard from './components/Dashboard'
 
 function App() {
   return (
     <div className="app">
-      <OrderGrid />
+      <Dashboard />
     </div>
   )
 }

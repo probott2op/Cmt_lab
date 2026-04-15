@@ -2,12 +2,21 @@ package com.lab2;
 
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Async persistence worker that consumes from the shared dbQueue.
+ * Handles Orders, Executions, and OrderStatusUpdates.
+ * 
+ * Runs on a dedicated thread to keep the order processing hot path
+ * free from DB I/O latency.
+ */
 public class OrderPersister implements Runnable {
     private final BlockingQueue<Object> queue;
     private volatile boolean running = true;
+
     public OrderPersister(BlockingQueue<Object> queue) {
-    this.queue = queue;
+        this.queue = queue;
     }
+
     @Override
     public void run() {
         System.out.println("Persistence Worker Started...");
@@ -19,18 +28,20 @@ public class OrderPersister implements Runnable {
                 if (obj instanceof Order) {
                     Order order = (Order) obj;
                     DatabaseManager.insertOrder(order);
-                    System.out.println("Persisted Order: " + order.getClOrdID());
                 } else if (obj instanceof Execution) {
                     Execution execution = (Execution) obj;
                     DatabaseManager.insertExecution(execution);
-                    System.out.println("Persisted Execution: " + execution.getExecId());
+                } else if (obj instanceof OrderStatusUpdate) {
+                    OrderStatusUpdate update = (OrderStatusUpdate) obj;
+                    DatabaseManager.updateOrderStatus(update.getOrderId(), update.getStatus(), update.getRemainingQty());
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }
     }
+
     public void stop() {
-    this.running = false;
+        this.running = false;
     }
 }

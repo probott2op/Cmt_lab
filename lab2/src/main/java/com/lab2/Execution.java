@@ -1,53 +1,75 @@
 package com.lab2;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 
 public class Execution {
-    private String execId;
-    private String orderId;
+    private long execId;
+    private long buyOrderId;        // FK → orders.order_id (buy side)
+    private long sellOrderId;       // FK → orders.order_id (sell side)
     private String symbol;
-    private char side;
+    private char side;              // Aggressor side ('1' = Buy aggressor, '2' = Sell aggressor)
     private int execQty;
     private double execPrice;
-    private Timestamp matchTime;
+    private long matchTimeMicros;   // Epoch microseconds
 
-    // Constructor
-    public Execution(String execId, String orderId, String symbol, char side, int execQty, double execPrice, Timestamp matchTime) {
+    // Full constructor
+    public Execution(long execId, long buyOrderId, long sellOrderId, String symbol,
+                     char side, int execQty, double execPrice, long matchTimeMicros) {
         this.execId = execId;
-        this.orderId = orderId;
+        this.buyOrderId = buyOrderId;
+        this.sellOrderId = sellOrderId;
         this.symbol = symbol;
         this.side = side;
         this.execQty = execQty;
         this.execPrice = execPrice;
-        this.matchTime = matchTime;
+        this.matchTimeMicros = matchTimeMicros;
     }
 
-    // Constructor without matchTime (will be set by database)
-    public Execution(String execId, String orderId, String symbol, char side, int execQty, double execPrice) {
+    // Constructor without matchTime — auto-captures microsecond timestamp
+    public Execution(long execId, long buyOrderId, long sellOrderId, String symbol,
+                     char side, int execQty, double execPrice) {
         this.execId = execId;
-        this.orderId = orderId;
+        this.buyOrderId = buyOrderId;
+        this.sellOrderId = sellOrderId;
         this.symbol = symbol;
         this.side = side;
         this.execQty = execQty;
         this.execPrice = execPrice;
-        this.matchTime = new Timestamp(System.currentTimeMillis());
+        Instant now = Instant.now();
+        this.matchTimeMicros = now.getEpochSecond() * 1_000_000L + now.getNano() / 1_000L;
     }
 
     // Getters and Setters
-    public String getExecId() {
+    public long getExecId() {
         return execId;
     }
 
-    public void setExecId(String execId) {
+    public void setExecId(long execId) {
         this.execId = execId;
     }
 
-    public String getOrderId() {
-        return orderId;
+    public long getBuyOrderId() {
+        return buyOrderId;
     }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
+    public void setBuyOrderId(long buyOrderId) {
+        this.buyOrderId = buyOrderId;
+    }
+
+    public long getSellOrderId() {
+        return sellOrderId;
+    }
+
+    public void setSellOrderId(long sellOrderId) {
+        this.sellOrderId = sellOrderId;
+    }
+
+    /**
+     * Get the aggressor's order ID (for FIX message compatibility).
+     * If the aggressor was a buyer, return buyOrderId; otherwise sellOrderId.
+     */
+    public long getAggressorOrderId() {
+        return (side == '1') ? buyOrderId : sellOrderId;
     }
 
     public String getSymbol() {
@@ -82,17 +104,17 @@ public class Execution {
         this.execPrice = execPrice;
     }
 
-    public Timestamp getMatchTime() {
-        return matchTime;
+    public long getMatchTimeMicros() {
+        return matchTimeMicros;
     }
 
-    public void setMatchTime(Timestamp matchTime) {
-        this.matchTime = matchTime;
+    public void setMatchTimeMicros(long matchTimeMicros) {
+        this.matchTimeMicros = matchTimeMicros;
     }
 
     @Override
     public String toString() {
-        return String.format("Execution[execId=%s, orderId=%s, symbol=%s, side=%c, execQty=%d, execPrice=%.2f, matchTime=%s]",
-                execId, orderId, symbol, side, execQty, execPrice, matchTime);
+        return String.format("Execution[execId=%d, buyOrderId=%d, sellOrderId=%d, symbol=%s, side=%c, execQty=%d, execPrice=%.2f, matchTimeMicros=%d]",
+                execId, buyOrderId, sellOrderId, symbol, side, execQty, execPrice, matchTimeMicros);
     }
 }
