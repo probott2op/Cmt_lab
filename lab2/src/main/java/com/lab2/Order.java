@@ -10,8 +10,11 @@ public class Order {
     private double price;
     private double quantity;
     private double originalQuantity;
-    private String status;           // NEW, PARTIALLY_FILLED, FILLED
+    // DB statuses: NEW, PARTIALLY_FILLED, FILLED, CANCELLED, PARTIALLY_CANCELLED
+    // Transient UI-only: CANCEL_PENDING (not persisted)
+    private String status;
     private long timestampMicros;    // Epoch microseconds
+    private transient String cancelReason; // Not serialized to DB — used for WS responses
 
     public Order(long orderId, long clOrdID, String symbol, char side, double price, double quantity) {
         this.orderId = orderId;
@@ -112,5 +115,36 @@ public class Order {
         } else {
             this.status = "PARTIALLY_FILLED";
         }
+    }
+
+    /**
+     * Can this order be cancelled?
+     * Only NEW or PARTIALLY_FILLED orders can be cancelled.
+     */
+    public boolean isCancellable() {
+        return "NEW".equals(status) || "PARTIALLY_FILLED".equals(status);
+    }
+
+    /**
+     * Cancel this order. 
+     * Transitions to CANCELLED (was NEW) or PARTIALLY_CANCELLED (was partially filled).
+     * Returns the previous status for audit trail.
+     */
+    public String cancel() {
+        String previousStatus = this.status;
+        if ("PARTIALLY_FILLED".equals(this.status)) {
+            this.status = "PARTIALLY_CANCELLED";
+        } else {
+            this.status = "CANCELLED";
+        }
+        return previousStatus;
+    }
+
+    public String getCancelReason() {
+        return cancelReason;
+    }
+
+    public void setCancelReason(String cancelReason) {
+        this.cancelReason = cancelReason;
     }
 }

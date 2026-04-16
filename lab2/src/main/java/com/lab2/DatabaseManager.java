@@ -170,4 +170,62 @@ public class DatabaseManager {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Insert an audit trail event for order lifecycle tracking.
+     * Called asynchronously by the OrderPersister worker.
+     */
+    public static void insertAuditEvent(AuditEvent event) {
+        String sql = "INSERT INTO order_audit_trail (event_id, order_id, event_type, from_status, to_status, detail, timestamp_micros) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, event.getEventId());
+            pstmt.setLong(2, event.getOrderId());
+            pstmt.setString(3, event.getEventType());
+            pstmt.setString(4, event.getFromStatus());
+            pstmt.setString(5, event.getToStatus());
+            pstmt.setString(6, event.getDetail());
+            pstmt.setLong(7, event.getTimestampMicros());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error inserting audit event: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Load audit trail for a specific order (on-demand, triggered when user clicks an order).
+     * Returns events ordered chronologically.
+     */
+    public static List<AuditEvent> loadAuditTrail(long orderId) {
+        List<AuditEvent> events = new ArrayList<>();
+        String sql = "SELECT event_id, order_id, event_type, from_status, to_status, detail, timestamp_micros " +
+                     "FROM order_audit_trail WHERE order_id = ? ORDER BY timestamp_micros ASC";
+        
+        try (Connection conn = DriverManager.getConnection(URL, USER, PASS);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, orderId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    AuditEvent event = new AuditEvent(
+                        rs.getLong("event_id"),
+                        rs.getLong("order_id"),
+                        rs.getString("event_type"),
+                        rs.getString("from_status"),
+                        rs.getString("to_status"),
+                        rs.getString("detail"),
+                        rs.getLong("timestamp_micros")
+                    );
+                    events.add(event);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error loading audit trail for order " + orderId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return events;
+    }
 }
+

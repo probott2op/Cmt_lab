@@ -1,6 +1,7 @@
 package com.lab2;
 
 import java.util.*;
+import java.util.Iterator;
 
 /**
  * Price-Time Priority Order Book using a TreeMap (Red-Black Tree) for price levels
@@ -49,6 +50,44 @@ public class OrderBook {
      */
     public synchronized void addOrder(Order order) {
         addToBook(order);
+    }
+
+    /**
+     * Cancel an order by removing it from the book.
+     * Searches both bids and asks for the order by ID.
+     * 
+     * @param orderId The order ID to cancel
+     * @return The removed Order, or null if not found in the book
+     */
+    public synchronized Order cancelOrder(long orderId) {
+        Order removed = removeFromSide(bids, orderId);
+        if (removed != null) return removed;
+        return removeFromSide(asks, orderId);
+    }
+
+    /**
+     * Search and remove an order from one side of the book.
+     * Iterates price levels and queues to find the order by ID.
+     */
+    private Order removeFromSide(TreeMap<Double, Queue<Order>> side, long orderId) {
+        Iterator<Map.Entry<Double, Queue<Order>>> levelIt = side.entrySet().iterator();
+        while (levelIt.hasNext()) {
+            Map.Entry<Double, Queue<Order>> entry = levelIt.next();
+            Queue<Order> queue = entry.getValue();
+            Iterator<Order> orderIt = queue.iterator();
+            while (orderIt.hasNext()) {
+                Order order = orderIt.next();
+                if (order.getOrderId() == orderId) {
+                    orderIt.remove();
+                    // Clean up empty price level
+                    if (queue.isEmpty()) {
+                        levelIt.remove();
+                    }
+                    return order;
+                }
+            }
+        }
+        return null;
     }
 
     /**

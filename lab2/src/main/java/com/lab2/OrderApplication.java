@@ -11,6 +11,7 @@ import quickfix.RejectLogon;
 import quickfix.Session;
 import quickfix.UnsupportedMessageType;
 import quickfix.field.*;
+import org.java_websocket.WebSocket;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class OrderApplication implements Application {
     private Map<String, Security> validSecurities = new HashMap<>();
     // Order Books: One per symbol for isolated concurrency
     private Map<String, OrderBook> orderBooks = new HashMap<>();
-    // Track current session for sending executions
+    // Track current session for sending FIX cancel responses
     private SessionID currentSessionID;
     // All active orders (recovered + current session) — for streaming to newly connected UI clients
     private ConcurrentHashMap<Long, Order> activeOrders = new ConcurrentHashMap<>();
@@ -40,6 +41,10 @@ public class OrderApplication implements Application {
         recoverUnfilledOrders();
         // Wire up the broadcaster to stream active orders to new WS clients
         broadcaster.setActiveOrdersSupplier(() -> activeOrders.values());
+        // Wire up cancel handler: UI cancel requests are delegated here
+        broadcaster.setCancelHandler(this::processCancelRequest);
+        // Wire up audit trail loader: on-demand loading from DB
+        broadcaster.setAuditTrailLoader(DatabaseManager::loadAuditTrail);
     }
     
     /**
@@ -106,6 +111,8 @@ public class OrderApplication implements Application {
         String msgType = message.getHeader().getString(MsgType.FIELD);
         if (msgType.equals(MsgType.ORDER_SINGLE)) {
         processNewOrder(message, sessionId, ingressTime);
+        } else if (msgType.equals(MsgType.ORDER_CANCEL_REQUEST)) {
+        processFixCancelRequest(message, sessionId, ingressTime);
         } else {
         System.out.println("Received unknown message type: " + msgType);
         }
@@ -138,14 +145,32 @@ public class OrderApplication implements Application {
             // Broadcast order to WebSocket clients (includes status=NEW, originalQuantity)
             broadcaster.broadcastOrder(order);
             
+            // Audit: ORDER_NEW
+            AuditEvent newEvent = new AuditEvent(IdGenerator.next(), orderId,
+                "ORDER_NEW", null, "NEW",
+                String.format("New %s order: %s %.0f@%.2f", side == '1' ? "BUY" : "SELL", symbol, qty, price));
+            dbQueue.offer(newEvent);
+            broadcaster.broadcastAuditEvent(newEvent);
+            
             // 3. Validation (Simple Rule: Price and Qty must be positive)
             if (qty <= 0 || price <= 0) {
                 sendReject(message, sessionId, "Invalid Price or Qty", ingressTime);
+                // Audit: ORDER_REJECTED
+                AuditEvent rejEvent = new AuditEvent(IdGenerator.next(), orderId,
+                    "ORDER_REJECTED", "NEW", "REJECTED", "Invalid Price or Qty");
+                dbQueue.offer(rejEvent);
+                broadcaster.broadcastAuditEvent(rejEvent);
             } else {
                 // Send ACK first (Low Latency)
                 acceptOrder(message, sessionId, ingressTime);
                 // Then queue for storage (Async via OrderPersister worker)
                 dbQueue.offer(order);
+                
+                // Audit: ORDER_ACK
+                AuditEvent ackEvent = new AuditEvent(IdGenerator.next(), orderId,
+                    "ORDER_ACK", "NEW", "NEW", "Order acknowledged");
+                dbQueue.offer(ackEvent);
+                broadcaster.broadcastAuditEvent(ackEvent);
                 
                 // 4. Match the order using the Order Book for this symbol
                 OrderBook book = getOrCreateOrderBook(symbol);
@@ -176,6 +201,15 @@ public class OrderApplication implements Application {
                         ));
                         // Broadcast resting order's fill status change to UI
                         broadcaster.sendOrderStatusUpdate(restingOrder);
+                        
+                        // Audit: fill status change for resting order
+                        String fillEventType = "FILLED".equals(restingOrder.getStatus()) 
+                            ? "ORDER_FILLED" : "ORDER_PARTIAL_FILL";
+                        AuditEvent restFillEvent = new AuditEvent(IdGenerator.next(), restingOrder.getOrderId(),
+                            fillEventType, "NEW", restingOrder.getStatus(),
+                            String.format("Resting order filled: qty remaining %.0f", restingOrder.getQuantity()));
+                        dbQueue.offer(restFillEvent);
+                        broadcaster.broadcastAuditEvent(restFillEvent);
                     }
                 }
                 
@@ -186,9 +220,194 @@ public class OrderApplication implements Application {
                 ));
                 // Broadcast incoming order's fill status to UI
                 broadcaster.sendOrderStatusUpdate(order);
+                
+                // Audit: fill status for incoming order (if it matched)
+                if (!"NEW".equals(order.getStatus())) {
+                    String incomingFillType = "FILLED".equals(order.getStatus()) 
+                        ? "ORDER_FILLED" : "ORDER_PARTIAL_FILL";
+                    AuditEvent incomingFillEvent = new AuditEvent(IdGenerator.next(), order.getOrderId(),
+                        incomingFillType, "NEW", order.getStatus(),
+                        String.format("Incoming order fill: qty remaining %.0f", order.getQuantity()));
+                    dbQueue.offer(incomingFillEvent);
+                    broadcaster.broadcastAuditEvent(incomingFillEvent);
+                }
             }
         } 
         catch (FieldNotFound e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Process cancel request from UI WebSocket.
+     * Validates the order state, removes from OrderBook, updates status, persists, and broadcasts.
+     * Also sends FIX cancel response if FIX session is available.
+     */
+    public void processCancelRequest(WebSocket conn, long orderId) {
+        Order order = activeOrders.get(orderId);
+        
+        if (order == null) {
+            broadcaster.sendCancelResponse(conn, orderId, "CANCEL_REJECTED", "Order not found");
+            System.out.println("Cancel REJECTED for " + orderId + ": Order not found");
+            return;
+        }
+        
+        if (!order.isCancellable()) {
+            String reason = "Order already " + order.getStatus().toLowerCase().replace('_', ' ');
+            broadcaster.sendCancelResponse(conn, orderId, "CANCEL_REJECTED", reason);
+            System.out.println("Cancel REJECTED for " + orderId + ": " + reason);
+            
+            // Audit: CANCEL_REJECTED (persisted for audit trail, status doesn't change in DB)
+            AuditEvent rejEvent = new AuditEvent(IdGenerator.next(), orderId,
+                "CANCEL_REJECTED", order.getStatus(), order.getStatus(), reason);
+            dbQueue.offer(rejEvent);
+            broadcaster.broadcastAuditEvent(rejEvent);
+            return;
+        }
+        
+        // Step 1: Broadcast CANCEL_PENDING to all UIs (transient state, not persisted)
+        broadcaster.broadcastCancelUpdate(orderId, "CANCEL_PENDING",
+            order.getQuantity(), order.getOriginalQuantity());
+        
+        // Audit: CANCEL_REQUESTED
+        String previousStatus = order.getStatus();
+        AuditEvent reqEvent = new AuditEvent(IdGenerator.next(), orderId,
+            "CANCEL_REQUESTED", previousStatus, "CANCEL_PENDING", "Cancel requested by user");
+        dbQueue.offer(reqEvent);
+        broadcaster.broadcastAuditEvent(reqEvent);
+        
+        // Step 2: Remove from OrderBook
+        OrderBook book = orderBooks.get(order.getSymbol());
+        if (book != null) {
+            book.cancelOrder(orderId);
+        }
+        
+        // Step 3: Set final cancelled status on the order object
+        String fromStatus = order.cancel(); // Returns previous status, sets CANCELLED or PARTIALLY_CANCELLED
+        String finalStatus = order.getStatus();
+        
+        // Step 4: Persist the status change to DB
+        dbQueue.offer(new OrderStatusUpdate(
+            orderId, finalStatus, order.getQuantity(), order.getOriginalQuantity()
+        ));
+        
+        // Step 5: Broadcast final cancel state to all UIs
+        broadcaster.broadcastCancelUpdate(orderId, finalStatus,
+            order.getQuantity(), order.getOriginalQuantity());
+        
+        // Step 6: Send targeted cancel response to the requesting UI client
+        broadcaster.sendCancelResponse(conn, orderId, finalStatus, null);
+        
+        // Step 7: Send FIX ExecutionReport with OrdStatus.CANCELED if FIX session is active
+        if (currentSessionID != null) {
+            sendFixCancelConfirm(order);
+        }
+        
+        // Audit: CANCEL_ACCEPTED
+        AuditEvent acceptEvent = new AuditEvent(IdGenerator.next(), orderId,
+            "CANCEL_ACCEPTED", fromStatus, finalStatus,
+            String.format("Order cancelled. Remaining qty: %.0f", order.getQuantity()));
+        dbQueue.offer(acceptEvent);
+        broadcaster.broadcastAuditEvent(acceptEvent);
+        
+        System.out.println("Cancel ACCEPTED for " + orderId + ": " + fromStatus + " → " + finalStatus);
+    }
+
+    /**
+     * Process cancel request arriving via FIX protocol (MsgType F).
+     */
+    private void processFixCancelRequest(Message message, SessionID sessionId, long ingressTime) {
+        try {
+            long origOrderId = Long.parseLong(message.getString(OrigClOrdID.FIELD));
+            
+            // Look up in active orders
+            Order order = activeOrders.get(origOrderId);
+            if (order == null) {
+                sendFixCancelReject(message, sessionId, "Unknown order", ingressTime);
+                return;
+            }
+            
+            if (!order.isCancellable()) {
+                sendFixCancelReject(message, sessionId, 
+                    "Order already " + order.getStatus().toLowerCase().replace('_', ' '), ingressTime);
+                return;
+            }
+            
+            // Remove from book
+            OrderBook book = orderBooks.get(order.getSymbol());
+            if (book != null) {
+                book.cancelOrder(origOrderId);
+            }
+            
+            String fromStatus = order.cancel();
+            String finalStatus = order.getStatus();
+            
+            // Persist
+            dbQueue.offer(new OrderStatusUpdate(
+                origOrderId, finalStatus, order.getQuantity(), order.getOriginalQuantity()
+            ));
+            
+            // Broadcast to all UIs
+            broadcaster.broadcastCancelUpdate(origOrderId, finalStatus,
+                order.getQuantity(), order.getOriginalQuantity());
+            
+            // FIX confirm
+            sendFixCancelConfirm(order);
+            
+            // Audit
+            AuditEvent event = new AuditEvent(IdGenerator.next(), origOrderId,
+                "CANCEL_ACCEPTED", fromStatus, finalStatus, "Cancel via FIX protocol");
+            dbQueue.offer(event);
+            broadcaster.broadcastAuditEvent(event);
+            
+            long egressTime = System.nanoTime();
+            PerformanceMonitor.recordLatency(egressTime - ingressTime);
+            
+        } catch (FieldNotFound e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send FIX ExecutionReport with OrdStatus.CANCELED confirming the cancel.
+     */
+    private void sendFixCancelConfirm(Order order) {
+        try {
+            quickfix.fix44.ExecutionReport cancelReport = new quickfix.fix44.ExecutionReport();
+            cancelReport.set(new OrderID(String.valueOf(order.getOrderId())));
+            cancelReport.set(new ExecID(String.valueOf(IdGenerator.next())));
+            cancelReport.set(new ClOrdID(String.valueOf(order.getClOrdID())));
+            cancelReport.set(new Symbol(order.getSymbol()));
+            cancelReport.set(new Side(order.getSide()));
+            cancelReport.set(new ExecType(ExecType.CANCELED));
+            cancelReport.set(new OrdStatus(OrdStatus.CANCELED));
+            cancelReport.set(new LeavesQty(order.getQuantity()));
+            cancelReport.set(new CumQty(order.getOriginalQuantity() - order.getQuantity()));
+            cancelReport.set(new AvgPx(0));
+            Session.sendToTarget(cancelReport, currentSessionID);
+        } catch (Exception e) {
+            System.err.println("Error sending FIX cancel confirm: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Send FIX OrderCancelReject (MsgType = 9) when cancel cannot be performed.
+     */
+    private void sendFixCancelReject(Message request, SessionID sessionId, String reason, long ingressTime) {
+        try {
+            quickfix.fix44.OrderCancelReject reject = new quickfix.fix44.OrderCancelReject();
+            reject.set(new OrderID(request.getString(OrigClOrdID.FIELD)));
+            reject.set(new ClOrdID(request.getString(ClOrdID.FIELD)));
+            reject.set(new OrigClOrdID(request.getString(OrigClOrdID.FIELD)));
+            reject.set(new OrdStatus(OrdStatus.REJECTED));
+            reject.set(new CxlRejResponseTo(CxlRejResponseTo.ORDER_CANCEL_REQUEST));
+            reject.set(new Text(reason));
+            Session.sendToTarget(reject, sessionId);
+            long egressTime = System.nanoTime();
+            PerformanceMonitor.recordLatency(egressTime - ingressTime);
+        } catch (Exception e) {
+            System.err.println("Error sending FIX cancel reject: " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -34,6 +34,9 @@ public class OrderPersister implements Runnable {
                 } else if (obj instanceof OrderStatusUpdate) {
                     OrderStatusUpdate update = (OrderStatusUpdate) obj;
                     DatabaseManager.updateOrderStatus(update.getOrderId(), update.getStatus(), update.getRemainingQty());
+                } else if (obj instanceof AuditEvent) {
+                    AuditEvent event = (AuditEvent) obj;
+                    DatabaseManager.insertAuditEvent(event);
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
