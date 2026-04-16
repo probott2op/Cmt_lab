@@ -80,8 +80,11 @@ const Dashboard = () => {
 
   const formatMicrosTimestamp = (micros) => {
     if (!micros) return '—';
-    const millis = Math.floor(micros / 1000);
-    const microsPart = micros % 1000;
+    // Timestamps arrive as strings (Gson long→string serialization).
+    // Values are within JS safe integer range (~1.77×10^15), so Number() is exact.
+    const microsNum = Number(micros);
+    const millis = Math.floor(microsNum / 1000);
+    const microsPart = microsNum % 1000;
     const date = new Date(millis);
     return date.toLocaleTimeString() + '.' + String(microsPart).padStart(3, '0') + 'μs';
   };

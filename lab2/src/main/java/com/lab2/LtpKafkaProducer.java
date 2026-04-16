@@ -27,6 +27,8 @@ public class LtpKafkaProducer {
         // Low-latency tuning: don't linger, send immediately
         props.put(ProducerConfig.LINGER_MS_CONFIG, 0);
         props.put(ProducerConfig.ACKS_CONFIG, "1");
+        // Fail fast if Kafka/topic is unavailable (default 60s blocks the FIX thread)
+        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 1000);
         this.producer = new KafkaProducer<>(props);
         System.out.println("Kafka LTP Producer initialized → " + bootstrapServers);
     }

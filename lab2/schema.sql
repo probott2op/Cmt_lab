@@ -87,3 +87,15 @@ CREATE TABLE executions (
     INDEX idx_exec_symbol (symbol),
     INDEX idx_exec_time (match_time_micros)
 );
+
+CREATE TABLE IF NOT EXISTS order_audit_trail (
+    event_id BIGINT PRIMARY KEY,
+    order_id BIGINT NOT NULL,
+    event_type VARCHAR(32) NOT NULL,
+    from_status VARCHAR(32),
+    to_status VARCHAR(32),
+    detail VARCHAR(255),
+    timestamp_micros BIGINT NOT NULL,
+    INDEX idx_audit_order (order_id),
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);

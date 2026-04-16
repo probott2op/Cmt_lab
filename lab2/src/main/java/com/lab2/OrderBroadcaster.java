@@ -4,8 +4,12 @@ import org.java_websocket.server.WebSocketServer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 
 import java.net.InetSocketAddress;
 import java.util.Collection;
@@ -16,7 +20,21 @@ import java.util.function.Supplier;
 
 public class OrderBroadcaster extends WebSocketServer {
     
-    private final Gson gson = new Gson();
+    /**
+     * Custom Gson instance that serializes all long/Long values as JSON strings.
+     * 
+     * WHY: Order IDs like 17761535713005333 exceed JavaScript's Number.MAX_SAFE_INTEGER
+     * (9007199254740991). When parsed as JSON numbers, JS silently rounds them
+     * (e.g., 5333 → 5332), causing "Order not found" on cancel requests.
+     * Sending as strings preserves exact precision in the browser.
+     */
+    private final Gson gson = new GsonBuilder()
+        .registerTypeAdapter(long.class, (JsonSerializer<Long>) (src, typeOfSrc, context) ->
+            new JsonPrimitive(String.valueOf(src)))
+        .registerTypeAdapter(Long.class, (JsonSerializer<Long>) (src, typeOfSrc, context) ->
+            new JsonPrimitive(String.valueOf(src)))
+        .create();
+
     // Supplier to fetch current active orders for streaming to newly connected clients
     private Supplier<Collection<Order>> activeOrdersSupplier;
     // Handler for cancel requests from UI (delegated to OrderApplication)
@@ -73,7 +91,11 @@ public class OrderBroadcaster extends WebSocketServer {
 
             switch (type) {
                 case "CANCEL_REQUEST": {
-                    long orderId = json.getAsJsonObject("data").get("orderId").getAsLong();
+                    // orderId may arrive as string (from our serialization) or number — handle both
+                    JsonElement orderIdElem = json.getAsJsonObject("data").get("orderId");
+                    long orderId = orderIdElem.isJsonPrimitive() && orderIdElem.getAsJsonPrimitive().isString()
+                        ? Long.parseLong(orderIdElem.getAsString())
+                        : orderIdElem.getAsLong();
                     System.out.println("Cancel request from UI for order: " + orderId);
                     if (cancelHandler != null) {
                         cancelHandler.accept(conn, orderId);
@@ -83,12 +105,16 @@ public class OrderBroadcaster extends WebSocketServer {
                     break;
                 }
                 case "AUDIT_REQUEST": {
-                    long orderId = json.getAsJsonObject("data").get("orderId").getAsLong();
+                    JsonElement orderIdElem = json.getAsJsonObject("data").get("orderId");
+                    long orderId = orderIdElem.isJsonPrimitive() && orderIdElem.getAsJsonPrimitive().isString()
+                        ? Long.parseLong(orderIdElem.getAsString())
+                        : orderIdElem.getAsLong();
                     System.out.println("Audit trail request for order: " + orderId);
                     if (auditTrailLoader != null) {
                         List<AuditEvent> events = auditTrailLoader.apply(orderId);
+                        // Use %s for orderId to emit it as a quoted string
                         String responseJson = String.format(
-                            "{\"type\":\"AUDIT_TRAIL\",\"data\":{\"orderId\":%d,\"events\":%s}}",
+                            "{\"type\":\"AUDIT_TRAIL\",\"data\":{\"orderId\":\"%s\",\"events\":%s}}",
                             orderId, gson.toJson(events)
                         );
                         conn.send(responseJson);
@@ -116,11 +142,12 @@ public class OrderBroadcaster extends WebSocketServer {
 
     /**
      * Broadcast an order status update (fill state change) to all connected UIs.
-     * Sent after matching for BOTH the incoming order AND affected resting orders.
+     * IDs are emitted as strings to preserve precision in JavaScript.
      */
     public void sendOrderStatusUpdate(Order order) {
+        // %s with String.valueOf for IDs to emit as quoted JSON strings
         String json = String.format(
-            "{\"type\":\"ORDER_UPDATE\",\"data\":{\"orderId\":%d,\"status\":\"%s\",\"remainingQty\":%.0f,\"originalQuantity\":%.0f}}",
+            "{\"type\":\"ORDER_UPDATE\",\"data\":{\"orderId\":\"%s\",\"status\":\"%s\",\"remainingQty\":%.0f,\"originalQuantity\":%.0f}}",
             order.getOrderId(), order.getStatus(), order.getQuantity(), order.getOriginalQuantity()
         );
         broadcast(json);
@@ -128,12 +155,10 @@ public class OrderBroadcaster extends WebSocketServer {
 
     /**
      * Send a cancel response to a specific client (the one who requested the cancel).
-     * Also broadcasts to all clients so everyone sees the state change.
      */
     public void sendCancelResponse(WebSocket requestor, long orderId, String status, String reason) {
-        // Targeted response to the requesting client
         String json = String.format(
-            "{\"type\":\"CANCEL_RESPONSE\",\"data\":{\"orderId\":%d,\"status\":\"%s\",\"reason\":\"%s\"}}",
+            "{\"type\":\"CANCEL_RESPONSE\",\"data\":{\"orderId\":\"%s\",\"status\":\"%s\",\"reason\":\"%s\"}}",
             orderId, status, reason != null ? reason : ""
         );
         if (requestor != null && requestor.isOpen()) {
@@ -143,11 +168,10 @@ public class OrderBroadcaster extends WebSocketServer {
 
     /**
      * Broadcast a cancel status update to ALL connected UIs.
-     * Used for CANCEL_PENDING and final CANCELLED/PARTIALLY_CANCELLED states.
      */
     public void broadcastCancelUpdate(long orderId, String status, double remainingQty, double originalQty) {
         String json = String.format(
-            "{\"type\":\"ORDER_UPDATE\",\"data\":{\"orderId\":%d,\"status\":\"%s\",\"remainingQty\":%.0f,\"originalQuantity\":%.0f}}",
+            "{\"type\":\"ORDER_UPDATE\",\"data\":{\"orderId\":\"%s\",\"status\":\"%s\",\"remainingQty\":%.0f,\"originalQuantity\":%.0f}}",
             orderId, status, remainingQty, originalQty
         );
         broadcast(json);
@@ -166,7 +190,7 @@ public class OrderBroadcaster extends WebSocketServer {
      */
     private void sendToClient(WebSocket conn, String type, long orderId, String reason) {
         String json = String.format(
-            "{\"type\":\"%s\",\"data\":{\"orderId\":%d,\"reason\":\"%s\"}}",
+            "{\"type\":\"%s\",\"data\":{\"orderId\":\"%s\",\"reason\":\"%s\"}}",
             type, orderId, reason
         );
         if (conn.isOpen()) {
